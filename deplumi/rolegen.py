@@ -41,21 +41,23 @@ def generate_role(name, resources, **ropts):
         **opts(parent=role)
     )
 
-    iam.RolePolicy(
-        f'{name}-policy',
-        role=role,
-        policy={
-            "Version": "2012-10-17",
-            # FIXME: Reduce this
-            "Statement": [{
-                "Effect": "Allow",
-                "Action": "*",  # FIXME: More reasonable permissions
-                "Resource": pulumi.Output.all(*[
-                    res[0].arn
-                    for res in resources.values()
-                ])
-              }]
-        },
-        **opts(parent=role)
-    )
+    if resources:
+        iam.RolePolicy(
+            f'{name}-policy',
+            role=role,
+            policy={
+                "Version": "2012-10-17",
+                # FIXME: Reduce this
+                "Statement": [{
+                    "Effect": "Allow",
+                    "Action": "*",  # FIXME: More reasonable permissions
+                    "Resource": pulumi.Output.all(*[
+                        res[0].arn
+                        for res in resources.values()
+                    ])
+                  }]
+            },
+            **opts(parent=role)
+        )
+
     return role

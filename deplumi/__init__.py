@@ -6,7 +6,7 @@ import os
 
 import pulumi
 from pulumi_aws import (
-    s3, lambda_, elasticloadbalancingv2 as elb, ec2, iam
+    s3, lambda_, elasticloadbalancingv2 as elb, ec2
 )
 
 from putils import (
