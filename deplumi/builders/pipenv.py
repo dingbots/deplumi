@@ -13,6 +13,13 @@ from putils import background
 
 
 def _get_root(relpath):
+    assert not relpath.is_absolute()
+    # Parents goes from longest to shortest, so:
+    # -1: '.'
+    # -2: first directory
+    # -3: second directory
+    # ...
+    # 0: The given file
     p = list(relpath.parents)
     if len(p) == 1:
         return relpath
@@ -46,7 +53,7 @@ class PipenvPackage:
     def get_builddir(self):
         # FIXME: Linux only
         # FIXME: Caching
-        buildroot = Path('/tmp/levents')
+        buildroot = Path('/tmp/deplumi')
         buildroot.mkdir(parents=True, exist_ok=True)
         contents = self.lockfile.read_bytes()
         dirname = hashlib.sha3_256(contents).hexdigest()
