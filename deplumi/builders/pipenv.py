@@ -52,7 +52,6 @@ class PipenvPackage:
     @background
     def get_builddir(self):
         # FIXME: Linux only
-        # FIXME: Caching
         buildroot = Path('/tmp/deplumi')
         buildroot.mkdir(parents=True, exist_ok=True)
         contents = self.lockfile.read_bytes()
@@ -102,6 +101,8 @@ class PipenvPackage:
 
         if not builddir.exists():
             builddir.mkdir()
+            # We use pip for the actual installation to use the --target argument
+            # to minimize what has to be installed in the actual env.
             out, _ = await self._call_pipenv('lock', '--requirements', stdout=subprocess.PIPE)
             with tempfile.NamedTemporaryFile() as ntf:
                 ntf.write(out)
