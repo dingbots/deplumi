@@ -134,11 +134,8 @@ class PipenvPackage:
 
     def _filter(self, path):
         root = _get_root(path)
-        if root.name.endswith('.dist-info'):
-            # Unnecessary metadata
-            return False
         # FIXME: Scan for all the dependencies of boto3 recursively
-        elif root.name in ('boto3', 'botocore'):
+        if root.name in ('boto3', 'botocore'):
             # These are provided by the runtime
             return False
         else:
