@@ -76,7 +76,7 @@ class PipenvPackage:
         env = {
             'PIPENV_NOSPIN': '1',
             'PIPENV_PIPFILE': str(self.pipfile),
-            'PIPENV_VIRTUALENV': await self.get_builddir(),
+            # 'PIPENV_VIRTUALENV': await self.get_builddir(),
             'PIPENV_VERBOSITY': '-1',
             **os.environ,
         }
@@ -104,6 +104,11 @@ class PipenvPackage:
             # We use pip for the actual installation to use the --target argument
             # to minimize what has to be installed in the actual env.
             out, _ = await self._call_pipenv('lock', '--requirements', stdout=subprocess.PIPE)
+            # You cannot use editable dependencies with --target, so we have to strip prefixed -e
+            out = b'\n'.join(
+                line[3:] if line.startswith(b'-e') else line
+                for line in out.split(b'\n')
+            )
             with tempfile.NamedTemporaryFile() as ntf:
                 ntf.write(out)
                 ntf.flush()
